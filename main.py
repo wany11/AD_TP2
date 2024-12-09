@@ -1,33 +1,81 @@
+import math
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+from affichage_acp import my_biplot
 
 data = pd.read_csv("notes.csv", sep=';')
 
-X = data.set_index(data.columns[0]).transpose()
+names = data.set_index(data.columns[0]).transpose()
 
-nomi = list(X.index)
+nomi = list(names.index)
+nomv = list(names.columns)
 
-math_scores = X['math']
-science_scores = X['scie']
-drawing_scores = X['d-m ']
+X = data.set_index(data.columns[0]).transpose().values
 
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+p = 5
+acp = PCA(n_components=p)
 
-for i in range(len(nomi)):
-    ax1.scatter(math_scores[i], science_scores[i])
-    ax1.text(math_scores[i], science_scores[i], nomi[i], fontsize=9, ha='right')
-ax1.set_title('Mathematique vs Sciences')
-ax1.set_xlabel('Mathematique')
-ax1.set_ylabel('Sciences')
+cc = acp.fit_transform(X)
 
-for i in range(len(nomi)):
-    ax2.scatter(math_scores[i], drawing_scores[i])
-    ax2.text(math_scores[i], drawing_scores[i], nomi[i], fontsize=9, ha='right')
-ax2.set_title('Mathematique vs Dessin')
-ax2.set_xlabel('Mathematique')
-ax2.set_ylabel('Dessin')
+acp2 = PCA(n_components='mle', whiten=True)
 
-plt.tight_layout()
+data2proj = acp2.fit_transform(X)
 
+explained_variance = np.cumsum(acp.explained_variance_ratio_)
+
+
+correlation = acp.components_ * np.sqrt(acp.explained_variance_ / X.var(axis=0) )
+
+biplot = my_biplot(score=cc[:, 0:2] ,coeff=np.transpose(acp.components_[0:2, :]),coeff_labels=nomv, score_labels=nomi, nomx="PC1", nomy="PC2")
+
+print("Principal components:\n", acp.components_)
+print("Explained variance:\n", acp.explained_variance_)
+
+plt.figure(figsize=(8, 6))
+plt.scatter(data2proj[:, 0], data2proj[:, 1], alpha=0.7, c='blue', edgecolor='k', s=50)
+plt.title('PCA Projection')
+plt.xlabel('Principal Component 1')
+plt.ylabel('Principal Component 2')
+plt.grid(True)
+plt.axhline(0, color='grey', lw=0.8)
+plt.axvline(0, color='grey', lw=0.8)
+
+plt.figure(figsize=(8, 5))
+plt.plot(range(1, len(explained_variance) + 1),
+         explained_variance, marker='o')
+
+plt.title('Cumulative Explained Variance by Number of Principal Components')
+plt.xlabel('Number of Principal Components')
+plt.ylabel('Cumulative Explained Variance')
+plt.grid(True)
+plt.xticks(range(1, len(explained_variance) + 1))
 plt.show()
+
+
+# Représentation E1 ∪ E2
+plt.figure(figsize=(8, 6))
+plt.scatter(X[:, 0], X[:, 1], color='blue', edgecolor='k', s=50)
+plt.title('Projection on E1 ∪ E2')
+plt.xlabel('Principal Component 1 (E1)')
+plt.ylabel('Principal Component 2 (E2)')
+plt.axhline(0, color='grey', lw=0.8)
+plt.axvline(0, color='grey', lw=0.8)
+plt.grid(True)
+plt.show()
+
+# Représentation E1 ∪ E3
+plt.figure(figsize=(8, 6))
+plt.scatter(X[:, 0], X[:, 2], color='red', edgecolor='k', s=50)
+plt.title('Projection on E1 ∪ E3')
+plt.xlabel('Principal Component 1 (E1)')
+plt.ylabel('Principal Component 3 (E3)')
+plt.axhline(0, color='grey', lw=0.8)
+plt.axvline(0, color='grey', lw=0.8)
+plt.grid(True)
+plt.show()
+
+# Corrélation
+print("Correlation:\n", correlation)
