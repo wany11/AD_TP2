@@ -2,9 +2,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.io import loadmat
 from sklearn.decomposition import PCA
-
+nan = np.nan
 imgtmp = loadmat("Indian_pines_corrected.mat")
 img = np.float32(imgtmp['indian_pines_corrected'])
+removed_bands = list(range(103, 108)) + list(range(149, 164))
+img = np.delete(img, removed_bands, axis=2)
 maptmp = loadmat("Indian_pines_gt.mat")
 map = maptmp['indian_pines_gt']
 
@@ -43,9 +45,17 @@ plt.imshow(map)
 plt.title("Ground truth map")
 plt.show()
 
+padded_components_list = []
 for k in range(3):
-    plt.plot(pca.components_[k, :])
-    plt.title(f'Spectral Signature of Principal Component {k+1}')
-    plt.xlabel('Wavelength Index')
-    plt.ylabel('Component Value')
-    plt.show()
+    padded_components = np.full(imgtmp['indian_pines_corrected'].shape[2], np.nan)
+    valid_indices = [i for i in range(imgtmp['indian_pines_corrected'].shape[2]) if i not in removed_bands]
+    padded_components[valid_indices] = pca.components_[k, :]
+    padded_components_list.append(padded_components)
+plt.figure(figsize=(10, 6))
+for i, component in enumerate(padded_components_list):
+    plt.plot(component, label=f'Principal Component {i+1}')
+plt.title('Spectral Signatures of Principal Components')
+plt.xlabel('Wavelength Index')
+plt.ylabel('Component Value')
+plt.legend()
+plt.show()
