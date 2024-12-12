@@ -58,7 +58,7 @@ plt.show()
 
 # Représentation E1 ∪ E2
 plt.figure(figsize=(8, 6))
-plt.scatter(X[:, 0], X[:, 1], color='blue', edgecolor='k', s=50)
+plt.scatter(data2proj[:, 0], data2proj[:, 1], color='blue', edgecolor='k', s=50)
 plt.title('Projection on E1 ∪ E2')
 plt.xlabel('Principal Component 1 (E1)')
 plt.ylabel('Principal Component 2 (E2)')
@@ -69,7 +69,7 @@ plt.show()
 
 # Représentation E1 ∪ E3
 plt.figure(figsize=(8, 6))
-plt.scatter(X[:, 0], X[:, 2], color='red', edgecolor='k', s=50)
+plt.scatter(data2proj[:, 0], data2proj[:, 2], color='red', edgecolor='k', s=50)
 plt.title('Projection on E1 ∪ E3')
 plt.xlabel('Principal Component 1 (E1)')
 plt.ylabel('Principal Component 3 (E3)')
