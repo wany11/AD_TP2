@@ -59,17 +59,20 @@ plt.show()
 # Représentation E1 ∪ E2
 plt.figure(figsize=(8, 6))
 plt.scatter(data2proj[:, 0], data2proj[:, 1], color='blue', edgecolor='k', s=50)
+for i, label in enumerate(nomi):
+    plt.annotate(label, (data2proj[i, 0], data2proj[i, 1]), textcoords="offset points", xytext=(0, 10), ha='center')
 plt.title('Projection on E1 ∪ E2')
 plt.xlabel('Principal Component 1 (E1)')
 plt.ylabel('Principal Component 2 (E2)')
 plt.axhline(0, color='grey', lw=0.8)
 plt.axvline(0, color='grey', lw=0.8)
 plt.grid(True)
-plt.show()
 
 # Représentation E1 ∪ E3
 plt.figure(figsize=(8, 6))
 plt.scatter(data2proj[:, 0], data2proj[:, 2], color='red', edgecolor='k', s=50)
+for i, label in enumerate(nomi):
+    plt.annotate(label, (data2proj[i, 0], data2proj[i, 2]), textcoords="offset points", xytext=(0, 10), ha='center')
 plt.title('Projection on E1 ∪ E3')
 plt.xlabel('Principal Component 1 (E1)')
 plt.ylabel('Principal Component 3 (E3)')
