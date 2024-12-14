@@ -37,6 +37,9 @@ print("Explained variance:\n", acp.explained_variance_)
 
 plt.figure(figsize=(8, 6))
 plt.scatter(cc[:, 0], cc[:, 1], alpha=0.7, c='blue', edgecolor='k', s=50)
+for i, label in enumerate(nomi):
+    plt.annotate(label, (cc[i, 0], cc[i, 1]), textcoords="offset points", xytext=(0, 10), ha='center')
+
 plt.title('PCA Projection')
 plt.xlabel('Principal Component 1')
 plt.ylabel('Principal Component 2')
